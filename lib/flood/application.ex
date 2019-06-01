@@ -9,7 +9,8 @@ defmodule Flood.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      FloodWeb.Endpoint
+      FloodWeb.Endpoint,
+      %{id: Flood.Worker, start: {Flood.Worker, :start_link, [1000]}},
       # Starts a worker by calling: Flood.Worker.start_link(arg)
       # {Flood.Worker, arg},
     ]
