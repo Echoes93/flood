@@ -2,33 +2,35 @@ defmodule Flood.Worker do
   use GenServer
 
   # API
-  def start_link(timeout) do
-    GenServer.start_link(__MODULE__, timeout, [name: __MODULE__])
-  end
-
-  def new_t(new_timeout), do: GenServer.cast(__MODULE__, {:timeout, new_timeout})
+  def start_link(name, t), do: GenServer.start_link(__MODULE__, t, name: via_registry(name))
+  def new_t(server, t), do: GenServer.cast(server, {:new_t, t})
+  def stop(name), do: GenServer.stop(via_registry(name))
 
   # CALLBACKS
-  def init(timeout \\ 1000) do
+  def init(t \\ 1000) do
     GenServer.cast(self(), :loop)
 
-    {:ok, {timeout, 0}}
+    {:ok, {t, 0}}
   end
 
-  def handle_cast(:loop, {timeout, count}) do
+  def handle_cast(:loop, {t, count}) do
+    pid = self()
     IO.puts "Hey: #{count}"
 
     spawn fn ->
-      Process.sleep timeout
-      GenServer.cast(__MODULE__, :loop)
+      Process.sleep t
+      GenServer.cast(pid, :loop)
     end
 
-    {:noreply, {timeout, count + 1}}
+    {:noreply, {t, count + 1}}
   end
 
-  def handle_cast({:timeout, new_timeout}, {_, count}) do
-    IO.puts "Changed timeout to: #{new_timeout}"
+  def handle_cast({:new_t, new_t}, {_, count}) do
+    IO.puts "Changed t to: #{new_t}"
 
-    {:noreply, {new_timeout, count}}
+    {:noreply, {new_t, count}}
   end
+
+  # PRIVATE
+  defp via_registry(name), do: {:via, Registry, {Flood.WorkerRegistry, name} }
 end

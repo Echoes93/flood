@@ -10,7 +10,8 @@ defmodule Flood.Application do
     children = [
       # Start the endpoint when the application starts
       FloodWeb.Endpoint,
-      %{id: Flood.Worker, start: {Flood.Worker, :start_link, [1000]}},
+      { Flood.WorkerSupervisor, [] },
+      { Registry, [keys: :unique, name: Flood.WorkerRegistry] }
       # Starts a worker by calling: Flood.Worker.start_link(arg)
       # {Flood.Worker, arg},
     ]
