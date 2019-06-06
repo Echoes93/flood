@@ -1,6 +1,8 @@
 defmodule FloodWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :flood
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", FloodWeb.UserSocket,
     websocket: true,
     longpoll: false

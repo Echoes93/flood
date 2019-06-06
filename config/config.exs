@@ -12,7 +12,10 @@ config :flood, FloodWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "CHbU7TwttgwWUJFnmj1PMm4j5xcZ5b8wq6rk4iGhkE5ubqHPvUHp0CqDBfwK/HkD",
   render_errors: [view: FloodWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Flood.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Flood.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [
+    signing_salt: "OHw1g1Bj"
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
