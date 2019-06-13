@@ -3,38 +3,41 @@ defmodule Flood.Flooder do
   import FloodWeb.FloodersChannel, only: [notify: 2]
 
   # API
-  def start_link(name, t, opts \\ []), do:
-    GenServer.start_link(__MODULE__, {name, t, opts}, name: via_registry(name))
+  def start_link(name, url, opts \\ []), do:
+    GenServer.start_link(__MODULE__, {name, url, 1, opts}, name: via_registry(name))
   def new_timeout(server, t), do: GenServer.cast(server, {:new_timeout, t})
   def stop(name), do: GenServer.stop(via_registry(name))
 
   # CALLBACKS
-  def init({name, timeout, opts}) do
+  def init({name, url, counter, opts}) do
     notify(:flooder_added, name)
     GenServer.cast(self(), :loop)
 
-    {:ok, {timeout, name, opts}}
+    {:ok, {name, url, counter, opts}}
   end
 
-  def handle_cast(:loop, {timeout, name, opts}) do
+  def handle_cast(:loop, {name, url, counter, opts}) do
     pid = self()
     ## ACTION
 
-    {:ok, {status, _}} = handle_request(opts[:url], opts[:method] || :get)
-    IO.puts "Flooder #{name}: request status: #{status}"
+    {:ok, method, timeout, headers, body} = get_opts(opts)
+
+    {:ok, {status}} = handle_request(url, method, headers, body)
+    IO.puts "Flooder #{name}: request status: #{status}, request count: #{counter}"
 
     spawn fn ->
       Process.sleep timeout
       GenServer.cast(pid, :loop)
     end
 
-    {:noreply, {timeout, name, opts}}
+    {:noreply, {name, url, counter + 1, opts}}
   end
 
-  def handle_cast({:new_timeout, new_timeout}, {timeout, name}) do
+  def handle_cast({:new_timeout, new_timeout}, {name, url, counter, opts}) do
+    {:ok, _, timeout, _, _} = get_opts(opts)
     IO.puts "Flooder #{name}: changed timeout: #{timeout} -> #{new_timeout}"
 
-    {:noreply, {new_timeout, name}}
+    {:noreply, {name, url, counter, opts}}
   end
 
   def terminate(_reason, {_, name}) do
@@ -45,12 +48,33 @@ defmodule Flood.Flooder do
   defp via_registry(name), do:
     {:via, Registry, {Flood.FlooderRegistry, name} }
 
-  defp handle_request(url, method) do
-    {:ok, status, respheaders, _client} = :hackney.request(
+  defp get_opts(opts) do
+    %{
+      method: method,
+      timeout: timeout,
+      headers: headers,
+      body: body,
+    } = Enum.into(
+      opts,
+      %{
+        method: :get,
+        timeout: 1000,
+        headers: [],
+        body: "",
+      }
+    )
+
+    {:ok, method, timeout, headers, body}
+  end
+
+  defp handle_request(url, method, headers, body) do
+    {:ok, status, _, _} = :hackney.request(
       method,
       url,
-      []
+      headers,
+      body
     )
-    {:ok, {status, respheaders}}
+
+    {:ok, {status}}
   end
 end
