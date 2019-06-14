@@ -4,40 +4,40 @@ defmodule Flood.Flooder do
 
   # API
   def start_link(name, url, opts \\ []), do:
-    GenServer.start_link(__MODULE__, {name, url, 1, opts}, name: via_registry(name))
+    GenServer.start_link(__MODULE__, {name, url, opts}, name: via_registry(name))
   def new_timeout(server, t), do: GenServer.cast(server, {:new_timeout, t})
   def stop(name), do: GenServer.stop(via_registry(name))
 
   # CALLBACKS
-  def init({name, url, counter, opts}) do
+  def init({name, url, opts}) do
     notify(:flooder_added, name)
     GenServer.cast(self(), :loop)
 
-    {:ok, {name, url, counter, opts}}
+    {:ok, {name, url, opts}}
   end
 
-  def handle_cast(:loop, {name, url, counter, opts}) do
+  def handle_cast(:loop, {name, url, opts}) do
     pid = self()
     ## ACTION
 
     {:ok, method, timeout, headers, body} = get_opts(opts)
 
     {:ok, {status}} = handle_request(url, method, headers, body)
-    IO.puts "Flooder #{name}: request status: #{status}, request count: #{counter}"
+    IO.puts "Flooder #{name}: request status: #{status}"
 
     spawn fn ->
       Process.sleep timeout
       GenServer.cast(pid, :loop)
     end
 
-    {:noreply, {name, url, counter + 1, opts}}
+    {:noreply, {name, url, opts}}
   end
 
-  def handle_cast({:new_timeout, new_timeout}, {name, url, counter, opts}) do
+  def handle_cast({:new_timeout, new_timeout}, {name, url, opts}) do
     {:ok, _, timeout, _, _} = get_opts(opts)
     IO.puts "Flooder #{name}: changed timeout: #{timeout} -> #{new_timeout}"
 
-    {:noreply, {name, url, counter, opts}}
+    {:noreply, {name, url, opts}}
   end
 
   def terminate(_reason, {_, name}) do
@@ -68,12 +68,16 @@ defmodule Flood.Flooder do
   end
 
   defp handle_request(url, method, headers, body) do
-    {:ok, status, _, _} = :hackney.request(
+    {:ok, status, _, client_ref} = :hackney.request(
       method,
       url,
       headers,
       body
     )
+    {:ok, _} = :hackney.body(client_ref)
+
+    Flood.Monitor.inc()
+    IO.puts "Request count #{Flood.Monitor.get_request_count()}"
 
     {:ok, {status}}
   end
