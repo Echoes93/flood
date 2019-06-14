@@ -76,7 +76,7 @@ defmodule Flood.Flooder do
     )
     {:ok, _} = :hackney.body(client_ref)
 
-    Flood.Monitor.inc()
+    Flood.Monitor.increment()
     IO.puts "Request count #{Flood.Monitor.get_request_count()}"
 
     {:ok, {status}}
