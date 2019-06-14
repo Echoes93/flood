@@ -6,6 +6,7 @@ defmodule Flood.Application do
   def start(_type, _args) do
     children = [
       FloodWeb.Endpoint,
+      Flood.Monitor,
       { Flood.FlooderSupervisor, [] },
       { Registry, [keys: :unique, name: Flood.FlooderRegistry] }
     ]
