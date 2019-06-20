@@ -19,7 +19,7 @@ defmodule FloodWeb.Router do
 
     get "/", PageController, :index
 
-    live "/counter", FloodersLive
+    live "/flooder", FloodersLive
   end
 
   # Other scopes may use custom stacks.
