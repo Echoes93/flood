@@ -13,7 +13,7 @@ defmodule FloodWeb.FloodersLive do
           <input
             type="text"
             name="name"
-            value="<%= @request_name %>"
+            value="<%= @flooder_name %>"
             placeholder="Name for Flood"
           />
           <input
@@ -48,7 +48,7 @@ defmodule FloodWeb.FloodersLive do
       socket,
       request_count: 0,
       request_url: "",
-      request_name: "",
+      flooder_name: "",
       flooder_count: 1,
       flooder_list: []
     )}
@@ -58,7 +58,7 @@ defmodule FloodWeb.FloodersLive do
     {:noreply, assign(
       socket,
       request_url: url,
-      request_name: name,
+      flooder_name: name,
       flooder_count: count
     )}
   end
@@ -73,7 +73,7 @@ defmodule FloodWeb.FloodersLive do
     {:noreply, assign(
       socket,
       request_url: "",
-      request_name: "",
+      flooder_name: "",
       flooder_count: 1,
       flooder_list: new_list
     )}
