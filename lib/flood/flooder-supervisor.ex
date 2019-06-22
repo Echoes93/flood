@@ -8,8 +8,8 @@ defmodule Flood.FlooderSupervisor do
   def init(_arg),
     do: DynamicSupervisor.init(strategy: :one_for_one)
 
-  def start_child(child_name, t \\ 1000), do:
+  def start_child(child_name, url, opts \\ []), do:
     DynamicSupervisor.start_child(
       __MODULE__,
-      %{id: Flooder, start: { Flooder, :start_link,  [child_name, t]}, restart: :transient})
+      %{id: Flooder, start: { Flooder, :start_link,  [child_name, url, opts]}, restart: :transient})
 end
