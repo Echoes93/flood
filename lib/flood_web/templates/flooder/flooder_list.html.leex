@@ -1,0 +1,9 @@
+<ul>
+  <%= for { _k, v } <- @flooder_list do %>
+    <li class="alert alert-info">
+      Name: <%= v["name"] %> /
+      URL: <%= v["url"] %> /
+      Method: <%= v["method"] %>
+    </li>
+  <% end %>
+</ul>

@@ -18,8 +18,6 @@ defmodule FloodWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-
-    live "/flooder", FloodersLive
   end
 
   # Other scopes may use custom stacks.
