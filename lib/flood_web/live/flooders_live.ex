@@ -68,7 +68,14 @@ defmodule FloodWeb.FloodersLive do
   end
 
   defp generate_flooder(params) do
-    %{"name" => name, "url"=> url, "method"=> method, "body"=> body} = params
-    Flood.FlooderSupervisor.start_child(name, url, %{method: method, body: body})
+    %{
+      "name" => name,
+      "url"=> url,
+      "method"=> method,
+      "body"=> body,
+      "timeout" => timeout
+    } = params
+    {value, _} = Integer.parse(timeout)
+    Flood.FlooderSupervisor.start_child(name, url, %{method: method, body: body, timeout: value})
   end
 end
