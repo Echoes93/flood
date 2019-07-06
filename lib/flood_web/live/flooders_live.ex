@@ -1,27 +1,30 @@
 defmodule FloodWeb.FloodersLive do
   use Phoenix.LiveView
 
+  alias Flood.FlooderState, as: State
+
   def render(assigns) do
     ~L"""
       <div>
         <%= FloodWeb.FlooderView.render("form.html", assigns) %>
-        <%= FloodWeb.FlooderView.render("flooder_list.html", assigns) %>
+        <%= FloodWeb.FlooderView.render("list.html", assigns) %>
       </div>
     """
   end
 
   def mount(_session, socket) do
+    State.subscribe_live_view()
+
     {:ok, assign(
       socket,
       flooder: %{
         "url" => "",
         "name" => "",
         "body" => "",
-        "count" => 1,
         "timeout" => 600,
         "method" => "get",
       },
-      flooder_list: []
+      flooders: State.get_flooders()
     )}
   end
 
@@ -34,12 +37,19 @@ defmodule FloodWeb.FloodersLive do
     )}
   end
 
+  def handle_event("remove", value, socket) do
+    Flood.FlooderSupervisor.stop_child(value)
+    State.remove_flooder(value)
+
+    {:noreply, socket}
+  end
+
   def handle_event("generate", _params, socket) do
     flooder = socket.assigns[:flooder]
-    flooder_list = socket.assigns[:flooder_list]
 
-    { count, _ } = Integer.parse(flooder["count"])
-    generate_flooder(flooder, count)
+    generate_flooder(flooder)
+
+    State.add_flooder(flooder["name"], flooder)
 
     {:noreply, assign(
       socket,
@@ -47,22 +57,18 @@ defmodule FloodWeb.FloodersLive do
         "url" => "",
         "name" => "",
         "body" => "",
-        "count" => 1,
         "timeout" => 600,
         "method" => "get",
-      },
-      flooder_list: flooder_list ++ [name: flooder]
+      }
     )}
   end
 
-  defp generate_flooder(params, 1) do
-    %{"name" => name, "url"=> url, "method"=> method, "body"=> body,} = params
-    Flood.FlooderSupervisor.start_child("#{name}_1", url, %{method: method, body: body})
+  def handle_info({_requesting_module, flooders}, socket) do
+    {:noreply, assign(socket, flooders: flooders)}
   end
 
-  defp generate_flooder(params, n) do
-    %{"name" => name, "url"=> url, "method"=> method, "body"=> body,} = params
-    Flood.FlooderSupervisor.start_child("#{name}_#{n}", url, %{method: method, body: body})
-    generate_flooder(params, n - 1)
+  defp generate_flooder(params) do
+    %{"name" => name, "url"=> url, "method"=> method, "body"=> body} = params
+    Flood.FlooderSupervisor.start_child(name, url, %{method: method, body: body})
   end
 end

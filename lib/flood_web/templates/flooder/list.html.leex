@@ -1,0 +1,10 @@
+<ul>
+  <%= for { name, flooder } <- @flooders do %>
+    <li class="alert alert-info">
+      <h3>Name: <%= flooder["name"] %></h3>
+      <p>URL: <%= flooder["url"] %></p>
+      <p>Method: <%= flooder["method"] %></p>
+      <button phx-click="remove" value="<%= name %>">Remove</button>
+    </li>
+  <% end %>
+</ul>

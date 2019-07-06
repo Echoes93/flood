@@ -11,5 +11,10 @@ defmodule Flood.FlooderSupervisor do
   def start_child(child_name, url, opts \\ []), do:
     DynamicSupervisor.start_child(
       __MODULE__,
-      %{id: Flooder, start: { Flooder, :start_link,  [child_name, url, opts]}, restart: :transient})
+      %{id: Flooder, start: { Flooder, :start_link, [child_name, url, opts]}, restart: :transient})
+
+  def stop_child(child_name), do:
+    DynamicSupervisor.stop(
+      __MODULE__,
+      %{id: Flooder, start: { Flooder, :stop, [child_name]}, restart: :transient})
 end

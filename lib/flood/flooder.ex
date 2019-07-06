@@ -59,7 +59,7 @@ defmodule Flood.Flooder do
       %{
         method: :get,
         timeout: 1000,
-        headers: [],
+        headers: [{<<"Content-Type">>, <<"application/json">>}],
         body: "",
       }
     )

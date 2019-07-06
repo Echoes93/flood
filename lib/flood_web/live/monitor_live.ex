@@ -12,7 +12,7 @@ defmodule FloodWeb.MonitorLive do
   def mount(_session, socket) do
     Monitor.subscribe_live_view()
 
-    {:ok, assign(socket, request_count: 0)}
+    {:ok, assign(socket, request_count: Monitor.get_request_count())}
   end
 
   def handle_info({_requesting_module, request_count}, socket) do
