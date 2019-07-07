@@ -2,3 +2,105 @@
 
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+body {
+  margin: 0px;
+  /* max-height: 100%; */
+  /* overflow: hidden; */
+  background-color: #f1f2f8;
+}
+
+.content-wrapper-before {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  transition: 300ms ease all;
+  background-color: #262d47;
+}
+
+.card {
+  margin-bottom: 1.875rem;
+  border: none;
+  -webkit-box-shadow: 0 1px 15px 1px rgba(62, 57, 107, .07);
+  box-shadow: 0 1px 15px 1px rgba(62, 57, 107, .07);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 850px;
+  word-wrap: break-word;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: .35rem;
+  background-color: #fff;
+  background-clip: border-box;
+}
+
+.card-title {
+  font-weight: 700;
+  color: #464855;
+}
+
+.card-subtitle {
+  color: #6b6f80;
+}
+
+.card-body {
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: .2px;
+  color: #6b6f80;
+}
+
+.flooder_form {
+  top: 40px;
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+}
+
+.btn {
+  border: none;
+  font-size: 14px;
+  height: 40px;
+}
+
+.btn-info {
+  color: #fff;
+  background-color: #28afd0;
+}
+
+.btn-warning {
+  color: #fff;
+  background-color: #fdb901;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #fa626b;
+}
+
+.flooder_list {
+  position: relative;
+  top: 70px;
+}
+
+.flooder_item {
+  width: 90%;
+  margin: auto;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.monitor {
+  text-align: center;
+  position: relative;
+}
+
+.monitor h4 {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+}

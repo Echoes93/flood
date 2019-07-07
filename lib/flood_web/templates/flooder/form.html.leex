@@ -1,20 +1,17 @@
-<form phx-change="on_change" phx-submit="generate" autocomplete="off">
+<form phx-change="on_change" phx-submit="generate" autocomplete="off" class="card flooder_form">
   <div class="row">
     <div class="column">
       <%= select :flooder, :method, [get: "get", post: "post", put: "put", delete: "delete"], value: @flooder["method"] %>
     </div>
     <div class="column">
-      <%= text_input :flooder, :name, value: @flooder["name"], placeholder: "Flooder name" %>
-    </div>
-    <div class="column">
-      <%= text_input :flooder, :count, type: "number", value: @flooder["count"] %>
+      <%= text_input :flooder, :name, value: @flooder["name"], placeholder: "Flooder name", required: true %>
     </div>
     <div class="column">
       <%= text_input :flooder, :timeout, type: "number", value: @flooder["timeout"] %>
     </div>
   </div>
-  <%= text_input :flooder, :url, value: @flooder["url"], placeholder: "Flooder URL" %>
+  <%= text_input :flooder, :url, value: @flooder["url"], placeholder: "URL", required: true %>
 
-  <%= textarea :flooder, :body, cols: 30, row: 10, value: @flooder["body"], placeholder: "JSON" %>
-  <button type="submit">Generate</button>
+  <%= textarea :flooder, :body, cols: 30, row: 10, value: @flooder["body"], placeholder: "JSON Body" %>
+  <button type="submit" class="btn btn-info">Generate</button>
 </form>
