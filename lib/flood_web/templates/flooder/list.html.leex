@@ -1,9 +1,9 @@
-<ul>
+<ul class="flooder_list">
   <%= for { name, flooder } <- @flooders do %>
-    <li class="alert alert-info">
-      <h3>Name: <%= flooder["name"] %></h3>
-      <p>URL: <%= flooder["url"] %></p>
-      <p>Method: <%= flooder["method"] %></p>
+    <li class="card flooder_item">
+      <h3 class="card-title"><%= flooder["name"] %> [<%= flooder["method"] %>]</h3>
+      <h5 class="card-subtitle">URL: <%= flooder["url"] %>, timeout <%= flooder["timeout"] %> ms.</h5>
+      <pre class="card-body"><%= flooder["body"] %></pre>
       <button phx-click="remove" value="<%= name %>">Remove</button>
     </li>
   <% end %>

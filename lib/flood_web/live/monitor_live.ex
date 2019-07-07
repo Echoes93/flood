@@ -5,7 +5,10 @@ defmodule FloodWeb.MonitorLive do
 
   def render(assigns) do
     ~L"""
-      <h3>Performed requests count: <%= @request_count %></h3>
+      <div class="monitor">
+        <img width="120" src="/images/rocket.png"/>
+        <h4>Performed request count - <%= @request_count %></h4>
+      </div>
     """
   end
 
