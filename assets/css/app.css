@@ -72,6 +72,16 @@ body {
   background-color: #28afd0;
 }
 
+.btn-warning {
+  color: #fff;
+  background-color: #fdb901;
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #fa626b;
+}
+
 .flooder_list {
   position: relative;
   top: 70px;

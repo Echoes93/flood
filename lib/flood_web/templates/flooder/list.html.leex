@@ -4,7 +4,12 @@
       <h3 class="card-title"><%= flooder["name"] %> [<%= flooder["method"] %>]</h3>
       <h5 class="card-subtitle">URL: <%= flooder["url"] %>, timeout <%= flooder["timeout"] %> ms.</h5>
       <pre class="card-body"><%= flooder["body"] %></pre>
-      <button phx-click="remove" value="<%= name %>">Remove</button>
+      <div>
+        <button phx-click="change_active" class="btn btn-warning" value="<%= name %>">
+          <%= if flooder["active"] do "Stop" else "Start" end %>
+        </button>
+        <button phx-click="remove" class="btn btn-danger" value="<%= name %>">Remove</button>
+      </div>
     </li>
   <% end %>
 </ul>

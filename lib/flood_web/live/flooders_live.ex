@@ -18,7 +18,7 @@ defmodule FloodWeb.FloodersLive do
     {:ok, assign(
       socket,
       flooder: %{
-        "url" => "",
+        "url" => "http://",
         "name" => "",
         "body" => "",
         "timeout" => 600,
@@ -44,8 +44,22 @@ defmodule FloodWeb.FloodersLive do
     {:noreply, socket}
   end
 
+  def handle_event("change_active", value, socket) do
+    flooder = Map.get(socket.assigns[:flooders], value)
+
+    if flooder["active"] do
+      Flood.FlooderSupervisor.stop_child(value)
+      State.change_active(value, false)
+    else
+      generate_flooder(flooder)
+      State.change_active(value, true)
+    end
+
+    {:noreply, socket}
+  end
+
   def handle_event("generate", _params, socket) do
-    flooder = socket.assigns[:flooder]
+    flooder = Map.put(socket.assigns[:flooder], "active", true)
 
     generate_flooder(flooder)
 
@@ -54,7 +68,7 @@ defmodule FloodWeb.FloodersLive do
     {:noreply, assign(
       socket,
       flooder: %{
-        "url" => "",
+        "url" => "http://",
         "name" => "",
         "body" => "",
         "timeout" => 600,

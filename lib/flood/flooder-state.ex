@@ -17,6 +17,11 @@ defmodule Flood.FlooderState do
     notify_live_view()
   end
 
+  def change_active(name, value) do
+    Agent.update(__MODULE__, &(Map.put(&1, name, Map.put(Map.get(&1, name), "active", value))))
+    notify_live_view()
+  end
+
   def subscribe_live_view() do
     Phoenix.PubSub.subscribe(Flood.PubSub, "flooders_update", link: true)
   end
